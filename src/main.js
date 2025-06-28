@@ -15,7 +15,7 @@ import {
 } from 'ant-design-vue'
 
 // 导入样式，注意顺序
-import 'ant-design-vue/dist/antd.css'
+import 'ant-design-vue/dist/reset.css'
 import './style.css'
 import './styles/variables.scss'
 
