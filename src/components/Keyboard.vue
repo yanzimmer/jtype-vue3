@@ -60,7 +60,7 @@ const getAriaLabel = (key, state) => {
         <div v-for="key in 'qwertyuiop'" :key="key"
           class="key"
           :class="{ target: key === targetKey, pressed: key === pressedKey }"
-          @click="$emit('key-click', key)"
+          @click="emit('keyClick', key)"
           :disabled="disabled"
         >{{ key }}</div>
       </div>
@@ -69,7 +69,7 @@ const getAriaLabel = (key, state) => {
         <div v-for="key in 'asdfghjkl'" :key="key"
           class="key"
           :class="{ target: key === targetKey, pressed: key === pressedKey }"
-          @click="$emit('key-click', key)"
+          @click="emit('keyClick', key)"
           :disabled="disabled"
         >{{ key }}</div>
         <div class="spacer half"></div>
@@ -79,7 +79,7 @@ const getAriaLabel = (key, state) => {
         <div v-for="key in 'zxcvbnm'" :key="key"
           class="key"
           :class="{ target: key === targetKey, pressed: key === pressedKey }"
-          @click="$emit('key-click', key)"
+          @click="emit('keyClick', key)"
           :disabled="disabled"
         >{{ key }}</div>
         <div class="spacer"></div>

@@ -301,7 +301,7 @@ if (saved) {
 
 onMounted(() => {
   console.log('组件挂载完成')
-  console.log('初始移动端状态:', isMobile.value)
+
   window.addEventListener('keydown', handleKey)
   window.addEventListener('resize', handleResize)
   
@@ -497,7 +497,7 @@ watch(finished, (newVal) => {
         :target-key="targetKey"
         :pressed-key="currentKey"
         :disabled="finished"
-        @key-click="handleKeyboardClick"
+        @keyClick="handleKeyboardClick"
         class="virtual-keyboard"
       />
 

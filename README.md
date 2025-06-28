@@ -21,25 +21,53 @@
 - Ant Design Vue 组件库
 - Web Audio API
 
-## 安装和运行
+## 运行说明
+
+### 环境要求
+
+- Node.js 16.0 或以上版本
+- npm 8.0 或以上版本
+
+### 开发环境运行
 
 1. 安装依赖：
 
 ```bash
+# 进入项目目录
+cd jtype-vue3
+
+# 安装项目依赖
 npm install
 ```
 
-2. 开发环境运行：
+2. 启动开发服务器：
 
 ```bash
 npm run dev
 ```
 
-3. 生产环境构建：
+服务器启动后，在浏览器中访问 http://localhost:5173
+
+### 生产环境部署
+
+1. 构建项目：
 
 ```bash
 npm run build
 ```
+
+2. 部署 dist 目录下的文件到 Web 服务器（如 Nginx）
+
+### 常见问题
+
+1. 如果 `npm install` 安装依赖过慢，可以尝试：
+
+```bash
+# 使用淘宝镜像
+npm config set registry https://registry.npmmirror.com
+```
+
+2. 如果遇到端口占用，可以在 `package.json` 中修改端口号
 
 ## 使用说明
 
@@ -91,12 +119,14 @@ MIT License
 本项目受到 [lisfan/JType](https://github.com/lisfan/JType) 的启发，在其基础上使用 Vue 3 和现代化工具链进行了重写，添加了更多功能特性。感谢原作者的开源贡献。
 
 原项目特性：
+
 - 随机生成练习字符列表
 - 课程选择的记忆功能
 - 假名预览及对应汉字显示
 - 打字速度统计
 
 在此基础上，本项目新增了：
+
 - 现代化的 UI 设计
 - 深色模式支持
 - 音效反馈
