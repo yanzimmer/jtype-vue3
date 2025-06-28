@@ -1,0 +1,15 @@
+$primary-color: #3e8fff;
+$border-radius: 8px;
+$font-family: "Inter", "Microsoft YaHei", sans-serif;
+$bg-color: #f5f7fb;
+
+:root {
+  --primary-color: #{$primary-color};
+  --border-radius-base: #{$border-radius};
+  --font-family: #{$font-family};
+}
+
+body {
+  background: $bg-color;
+  font-family: $font-family;
+} 

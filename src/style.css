@@ -1,0 +1,163 @@
+/* 重置默认样式 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 基础变量 */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  
+  /* 颜色 */
+  --primary-color: #1677ff;
+  --primary-color-rgb: 22, 119, 255;
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #ff4d4f;
+  
+  /* 背景 */
+  --bg-base: #ffffff;
+  --bg-container: #ffffff;
+  --bg-overlay: #ffffff;
+  --bg-overlay-hover: #ffffff;
+  
+  /* 文本 */
+  --text-primary: rgba(0, 0, 0, 0.88);
+  --text-secondary: rgba(0, 0, 0, 0.45);
+  --text-disabled: rgba(0, 0, 0, 0.25);
+  
+  /* 边框 */
+  --border-radius: 6px;
+  
+  /* 阴影 */
+  --shadow-1: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.12);
+  
+  /* 动画 */
+  --transition-duration: 0.3s;
+  --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: all var(--transition-duration) var(--transition-timing);
+  --transition-color: color var(--transition-duration) var(--transition-timing);
+  --transition-background: background-color var(--transition-duration) var(--transition-timing);
+  --transition-transform: transform var(--transition-duration) var(--transition-timing);
+  --transition-shadow: box-shadow var(--transition-duration) var(--transition-timing);
+}
+
+/* 深色主题 */
+:root.dark {
+  color-scheme: dark;
+  
+  /* 颜色 */
+  --primary-color: #4096ff;
+  --primary-color-rgb: 64, 150, 255;
+  --success-color: #49aa19;
+  --warning-color: #d89614;
+  --error-color: #dc4446;
+  
+  /* 背景 */
+  --bg-base: #2a2a2a;
+  --bg-container: #2a2a2a;
+  --bg-overlay: #2a2a2a;
+  --bg-overlay-hover: #2a2a2a;
+  
+  /* 文本 */
+  --text-primary: rgba(255, 255, 255, 0.85);
+  --text-secondary: rgba(255, 255, 255, 0.45);
+  --text-disabled: rgba(255, 255, 255, 0.25);
+  
+  /* 阴影 */
+  --shadow-1: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* 全局布局样式 */
+html {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  transition: var(--transition-background), var(--transition-color);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  transition: var(--transition-background), var(--transition-color);
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  transition: var(--transition-color);
+}
+
+button {
+  border-radius: var(--border-radius);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--bg-container);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition-background), var(--transition-color), var(--transition-transform), var(--transition-shadow);
+}
+
+button:hover {
+  background-color: var(--bg-overlay-hover);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:focus,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--primary-color);
+}
+
+.card {
+  padding: 2em;
+  background-color: var(--bg-container);
+  border-radius: var(--border-radius);
+  transition: var(--transition-background), var(--transition-shadow);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-container);
+  transition: var(--transition-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border-radius: 4px;
+  transition: var(--transition-background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* 选中文本样式 */
+::selection {
+  background-color: var(--primary-color);
+  color: white;
+  transition: var(--transition-background), var(--transition-color);
+}
