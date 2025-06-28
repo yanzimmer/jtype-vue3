@@ -5,6 +5,7 @@ class SoundManager {
     this.audioCache = new Map()
     this.audioContext = null
     this.wrongBuffer = null
+    this.currentAudio = null // 添加当前正在播放的音频引用
     
     // 初始化音频上下文
     this.init()
@@ -87,6 +88,12 @@ class SoundManager {
         return
       }
       
+      // 如果有正在播放的音频，先停止它
+      if (this.currentAudio) {
+        this.currentAudio.pause()
+        this.currentAudio.currentTime = 0
+      }
+      
       let audio = this.audioCache.get(romaji)
       
       if (!audio) {
@@ -109,12 +116,18 @@ class SoundManager {
         
         audio.addEventListener('ended', () => {
           console.log('音频播放结束:', romaji)
+          if (this.currentAudio === audio) {
+            this.currentAudio = null
+          }
         })
         
         this.audioCache.set(romaji, audio)
       }
       
       try {
+        // 更新当前播放的音频引用
+        this.currentAudio = audio
+        audio.currentTime = 0 // 确保从头开始播放
         await audio.play()
       } catch (error) {
         console.error('音频播放失败:', error)

@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 
 export const useSettingStore = defineStore('setting', () => {
   const inputMode = ref('roman') // 'roman' | 'kana'
-  const isSoundEnabled = ref(true)
+  const isSoundEnabled = ref(false)
   const isDarkMode = ref(false)
   const isStreakMode = ref(false)
 

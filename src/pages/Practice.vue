@@ -10,7 +10,8 @@ import {
   Input,
   Radio,
   Drawer,
-  Switch
+  Switch,
+  InputNumber
 } from 'ant-design-vue'
 import Keyboard from '../components/Keyboard.vue'
 import { soundManager } from '../utils/sound'
@@ -54,28 +55,27 @@ watch(drawerOpen, (newVal) => {
 
 // 处理抽屉打开
 function handleDrawerOpen() {
-  console.log('点击打开抽屉按钮')
-  console.log('当前是否移动端:', isMobile.value)
-  console.log('当前抽屉状态:', drawerOpen.value)
   drawerOpen.value = true
-  console.log('设置后抽屉状态:', drawerOpen.value)
+  // 禁止背景滚动
+  document.body.style.overflow = 'hidden'
 }
 
 // 处理抽屉关闭
 function handleDrawerClose() {
-  console.log('关闭抽屉')
   drawerOpen.value = false
+  // 恢复背景滚动
+  document.body.style.overflow = ''
 }
 
 // 监听窗口大小变化
 function handleResize() {
   const oldIsMobile = isMobile.value
   isMobile.value = window.innerWidth < 768
-  console.log('窗口大小变化:', {
-    width: window.innerWidth,
-    oldIsMobile,
-    newIsMobile: isMobile.value
-  })
+  
+  // 如果从移动端切换到桌面端,关闭抽屉
+  if (!isMobile.value && oldIsMobile && drawerOpen.value) {
+    handleDrawerClose()
+  }
 }
 
 const leafMap = getLeafMap()
@@ -130,18 +130,28 @@ const modeOptions = [
 
 const currentKey = ref('')
 const isWrong = ref(false)
-const practiceCount = ref(10) // 添加练习数量的响应式变量
+const practiceCount = ref(24)
+const autoRestartTimer = ref(null) // 添加定时器引用
 
 // 处理练习数量变化
 function handlePracticeCountChange(value) {
-  const num = parseInt(value)
-  if (isNaN(num) || num < 1) {
-    practiceCount.value = 1
-  } else if (num > 100) {
-    practiceCount.value = 100
-  } else {
-    practiceCount.value = num
+  console.log('输入值:', value, typeof value)
+  // 如果是事件对象,则获取目标值
+  if (value && value.target) {
+    value = value.target.value
   }
+  
+  let num = parseInt(value)
+  console.log('解析后:', num, typeof num)
+  
+  if (isNaN(num) || num < 1) {
+    num = 1
+  } else if (num > 100) {
+    num = 100
+  }
+  
+  practiceCount.value = num
+  
   // 自动更新练习
   if (POOL.value.length) {
     restart()
@@ -150,8 +160,8 @@ function handlePracticeCountChange(value) {
 
 // 处理输入框按键事件
 function handleInputKeydown(e) {
-  // 允许数字键、退格键、删除键、方向键
-  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']
+  // 允许数字键、退格键、删除键、方向键、Tab键
+  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab']
   if (!/^\d$/.test(e.key) && !allowedKeys.includes(e.key)) {
     e.preventDefault()
   }
@@ -187,6 +197,13 @@ const textInput = ref('')
 
 function restart() {
   if(!POOL.value.length) return
+  
+  // 清除自动重新开始的定时器
+  if (autoRestartTimer.value) {
+    clearTimeout(autoRestartTimer.value)
+    autoRestartTimer.value = null
+  }
+  
   chars.value = genChars(practiceCount.value)
   results.value = Array(chars.value.length).fill(null)
   idx.value = 0
@@ -326,12 +343,20 @@ const targetKey = computed(() => {
 })
 
 onBeforeUnmount(() => {
+  if (autoRestartTimer.value) {
+    clearTimeout(autoRestartTimer.value)
+    autoRestartTimer.value = null
+  }
+  
   window.removeEventListener('keydown', handleKey)
   window.removeEventListener('resize', handleResize)
   
   if (window.visualViewport) {
     window.visualViewport.removeEventListener('resize', handleVisualViewportResize)
   }
+  
+  // 确保恢复body的overflow
+  document.body.style.overflow = ''
 })
 
 // 监听音效设置变化
@@ -357,8 +382,10 @@ watch(finished, (newVal) => {
     console.log(message)
     
     // 3秒后自动重新开始
-    setTimeout(() => {
-      restart()
+    autoRestartTimer.value = setTimeout(() => {
+      if (autoRestartTimer.value) { // 检查定时器是否还存在（没有被手动重启清除）
+        restart()
+      }
     }, 3000)
   }
 })
@@ -469,16 +496,15 @@ watch(finished, (newVal) => {
                 @click="handleStep(-1)"
                 :disabled="practiceCount <= 1"
               >-</button>
-              <Input
+              <InputNumber
                 v-model:value="practiceCount"
-                type="number"
-                size="small"
-                style="width: 60px"
                 :min="1"
                 :max="100"
+                size="small"
+                style="width: 60px"
+                :controls="false"
                 @change="handlePracticeCountChange"
                 @keydown="handleInputKeydown"
-                @blur="handlePracticeCountChange(practiceCount)"
               />
               <button 
                 class="step-button" 
@@ -610,8 +636,43 @@ watch(finished, (newVal) => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 @import '../styles/practice.css';
+
+/* 自定义单选按钮组样式 */
+:deep(.ant-radio-group-solid) {
+  .ant-radio-button-wrapper {
+    color: #1677ff;
+    border-color: #1677ff;
+    background: transparent;
+    
+    &:hover {
+      color: #4096ff;
+      border-color: #4096ff;
+    }
+    
+    &.ant-radio-button-wrapper-checked {
+      color: #ffffff !important;
+      background: #1677ff;
+      border-color: #1677ff;
+      
+      &:hover {
+        color: #ffffff !important;
+        background: #4096ff;
+        border-color: #4096ff;
+      }
+
+      &:focus-within {
+        color: #ffffff !important;
+      }
+    }
+
+    &:focus-within {
+      color: #1677ff;
+    }
+  }
+}
+
 .completion-info {
   position: fixed;
   top: 50%;
@@ -660,5 +721,31 @@ watch(finished, (newVal) => {
 
 .restart-button:hover {
   background: var(--primary-color-hover);
+}
+
+/* 练习数量输入框样式 */
+.practice-count-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  :deep(.ant-input-number) {
+    width: 60px;
+    
+    .ant-input-number-input {
+      text-align: center;
+      padding: 0 4px;
+      font-size: 14px;
+    }
+    
+    &:hover {
+      border-color: var(--primary-color);
+    }
+    
+    &.ant-input-number-focused {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+    }
+  }
 }
 </style> 

@@ -27,11 +27,9 @@ const keyboardLayout = [
 
 // 计算每个按键的状态
 const getKeyState = (key) => {
-  if (!props.targetKey) return 'normal'
+  if (props.disabled) return 'normal'
   if (key === props.targetKey.toLowerCase()) return 'target'
-  if (key === props.pressedKey.toLowerCase()) {
-    return key === props.targetKey.toLowerCase() ? 'correct' : 'pressed'
-  }
+  if (key === props.pressedKey.toLowerCase()) return 'pressed'
   return 'normal'
 }
 
@@ -59,18 +57,18 @@ const getAriaLabel = (key, state) => {
       <div class="keyboard-row">
         <div v-for="key in 'qwertyuiop'" :key="key"
           class="key"
-          :class="{ target: key === targetKey, pressed: key === pressedKey }"
-          @click="emit('keyClick', key)"
-          :disabled="disabled"
+          :class="getKeyState(key)"
+          @click="handleKeyClick(key)"
+          :disabled="props.disabled"
         >{{ key }}</div>
       </div>
       <div class="keyboard-row">
         <div class="spacer half"></div>
         <div v-for="key in 'asdfghjkl'" :key="key"
           class="key"
-          :class="{ target: key === targetKey, pressed: key === pressedKey }"
-          @click="emit('keyClick', key)"
-          :disabled="disabled"
+          :class="getKeyState(key)"
+          @click="handleKeyClick(key)"
+          :disabled="props.disabled"
         >{{ key }}</div>
         <div class="spacer half"></div>
       </div>
@@ -78,9 +76,9 @@ const getAriaLabel = (key, state) => {
         <div class="spacer"></div>
         <div v-for="key in 'zxcvbnm'" :key="key"
           class="key"
-          :class="{ target: key === targetKey, pressed: key === pressedKey }"
-          @click="emit('keyClick', key)"
-          :disabled="disabled"
+          :class="getKeyState(key)"
+          @click="handleKeyClick(key)"
+          :disabled="props.disabled"
         >{{ key }}</div>
         <div class="spacer"></div>
       </div>
@@ -126,6 +124,8 @@ const getAriaLabel = (key, state) => {
   user-select: none;
   text-transform: uppercase;
   transition: all 0.2s ease;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .key:hover {
@@ -136,11 +136,14 @@ const getAriaLabel = (key, state) => {
   background: var(--primary-color);
   color: white;
   transform: scale(1.1);
+  border-color: var(--primary-color);
 }
 
 .key.pressed {
   background: var(--bg-overlay-hover);
   transform: scale(0.95);
+  color: var(--text-primary);
+  border-color: var(--primary-color);
 }
 
 .spacer {
